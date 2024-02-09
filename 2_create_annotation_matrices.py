@@ -1,36 +1,18 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 # import packages
 import os
 import gzip
 import pandas as pd
 import numpy as np
 
-
-# In[2]:
-
-
 # function to read GWAS summary statistics for each ancestry group
 def read_gwas_summary_stats(file_path):
     return pd.read_csv(file_path, sep = '\t')
-
-
-# In[3]:
-
 
 # function to read individual .bedGraph files
 def read_bedgraph(file_path):
     columns = ['CHR', 'START', 'END', 'METRIC']
     bedgraph_file = pd.read_csv(file_path, sep = '\t', header = None, names = columns)
     return bedgraph_file
-
-
-# In[4]:
-
 
 # function to parse through .bedGraph files and create annotation matrix
 def parse_bedgraph_folder(gwas_df, folder_path, output_path):
@@ -69,18 +51,10 @@ def parse_bedgraph_folder(gwas_df, folder_path, output_path):
 
     print(f"Annotation matrix for {output_path} saved to {output_file_path}")
 
-
-# In[5]:
-
-
 # establish file paths for data folders
 data_folder_path = 'C:/Users/emily/BINF_43C9/data/'
 pheno_categories = ['AgeSmk']
 ancestry_folders = ['AFR', 'AMR', 'EAS', 'EUR']
-
-
-# In[ ]:
-
 
 # read GWAS summary statistics, parse .bedGraph files, and create annotation matrix for each phenotype and ancestry group
 for phenotype in pheno_categories:
@@ -91,4 +65,3 @@ for phenotype in pheno_categories:
 
         gwas_df = read_gwas_summary_stats(gwas_file_path)
         parse_bedgraph_folder(gwas_df, bedgraph_folder_path, output_folder_path)
-
