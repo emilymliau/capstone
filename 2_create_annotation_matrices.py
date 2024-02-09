@@ -15,9 +15,9 @@ def read_bedgraph(file_path):
     return bedgraph_file
 
 # function to parse through .bedGraph files and create annotation matrix
-def parse_bedgraph_folder(gwas_df, folder_path, output_path):
+def parse_bedgraph_folder(gwas_df, folder_path, output_path, ancestry, phenotypes):
     # initialize annotation matrix
-    annot_matrix = np.zeros((len(gwas_df), 127))
+    annot_matrix = np.zeros((len(gwas_df), 127 + len(phenotypes)))
 
     # establish path for .bedGraph files
     files = os.listdir(folder_path)
@@ -37,31 +37,38 @@ def parse_bedgraph_folder(gwas_df, folder_path, output_path):
         file_counter = 0
         for index in range(128):
             if index not in [60, 64]:
-                annot_matrix[index][file_counter] = 1
+                annot_matrix[:, file_counter] = 1
                 file_counter += 1
 
+    # Add separate p-value columns for each phenotype
+    for i, phenotype in enumerate(phenotypes):
+        if phenotype in gwas_df.columns:
+            annot_matrix[:, 127 + i] = gwas_df[phenotype].values
+
     # create annotation matrix
-    matrix_df = pd.DataFrame(annot_matrix)
-    anno_matrix_df = pd.concat([gwas_df['RSID'], matrix_df], axis=1)
-    anno_matrix_df['P-VALUE'] = gwas_df['P']
+    matrix_df = pd.DataFrame(annot_matrix, columns=[f'Annotation_{i}' for i in range(127)] + [f'{phenotype}_pval' for phenotype in phenotypes])
+    matrix_df['P-VALUE'] = gwas_df['P']
 
     # save annotation matrix as .csv.gz file with modified output file path format
-    output_file_path = os.path.join(output_path, f'{os.path.basename(output_path)}_combined.csv.gz')
-    anno_matrix_df.to_csv(output_file_path, index=False, compression='gzip')
+    output_file_path = os.path.join(output_path, f'{ancestry}_stratified_combined.csv.gz')
+    matrix_df.to_csv(output_file_path, index=False, compression='gzip')
 
     print(f"Annotation matrix for {output_path} saved to {output_file_path}")
 
 # establish file paths for data folders
 data_folder_path = '/storage/projects/capstone24/data/'
-pheno_categories = ['AgeSmk']
+pheno_categories = ['AgeSmk', 'CigDay', 'DrnkWk', 'SmkCes', 'SmkInit']
 ancestry_folders = ['AFR', 'AMR', 'EAS', 'EUR']
 
-# read GWAS summary statistics, parse .bedGraph files, and create annotation matrix for each ancestry and phenotype
-for ancestry in ancestry_folders:
-    for phenotype in pheno_categories:
+# read GWAS summary statistics, parse .bedGraph files, and create annotation matrix for each phenotype and ancestry
+for phenotype in pheno_categories:
+    for ancestry in ancestry_folders:
         gwas_file_path = os.path.join(data_folder_path, ancestry + '_stratified', f'GSCAN_{phenotype}_2022_GWAS_SUMMARY_STATS_{ancestry}.txt')
         bedgraph_folder_path = os.path.join(data_folder_path, 'BedGraph')
-        output_folder_path = os.path.join(data_folder_path, f'{ancestry}_stratified_{phenotype}')
+        output_folder_path = os.path.join(data_folder_path, f'{ancestry}_stratified', f'{ancestry}_stratified_{phenotype}')
+
+        # Create the output folder if it doesn't exist
+        os.makedirs(output_folder_path, exist_ok=True)
 
         gwas_df = read_gwas_summary_stats(gwas_file_path)
-        parse_bedgraph_folder(gwas_df, bedgraph_folder_path, output_folder_path)
+        parse_bedgraph_folder(gwas_df, bedgraph_folder_path, output_folder_path, ancestry, pheno_categories)
