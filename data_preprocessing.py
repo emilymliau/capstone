@@ -1,16 +1,6 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 # import packages
 import os
 import gzip
-
-
-# In[ ]:
-
 
 # function to unzip .txt.gz files
 def unzip_gz_files(folder_path):
@@ -39,10 +29,5 @@ def unzip_gz_files(folder_path):
 
     print("All .txt.gz files in all folders unzipped.")
 
-
-# In[ ]:
-
-
 data_folder_path = 'C:/Users/emily/BINF_43C9/data/'
 unzip_gz_files(data_folder_path)
-
