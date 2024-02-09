@@ -6,12 +6,12 @@ import numpy as np
 
 # function to read GWAS summary statistics for each ancestry group
 def read_gwas_summary_stats(file_path):
-    return pd.read_csv(file_path, sep='\t')
+    return pd.read_csv(file_path, sep = '\t')
 
 # function to read individual .bedGraph files
 def read_bedgraph(file_path):
     columns = ['CHR', 'START', 'END', 'METRIC']
-    bedgraph_file = pd.read_csv(file_path, sep='\t', header=None, names=columns)
+    bedgraph_file = pd.read_csv(file_path, sep = '\t', header = None, names = columns)
     return bedgraph_file
 
 # function to parse through .bedGraph files and create annotation matrix
@@ -31,7 +31,7 @@ def parse_bedgraph_folder(gwas_df, folder_path, output_path, ancestry, phenotype
         x = bedgraph_df['METRIC'].quantile([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
         temp = bedgraph_df.loc[bedgraph_df['METRIC'] > x[0.6]]
 
-        merged = pd.merge(gwas_df, temp, how='inner', left_on=['CHR', 'POS'], right_on=['CHR', 'START'])
+        merged = pd.merge(gwas_df, temp, how = 'inner', left_on = ['CHR', 'POS'], right_on = ['CHR', 'START'])
         result_df = merged[(merged['POS'] >= merged['START']) & (merged['POS'] <= merged['END'])]
 
         file_counter = 0
@@ -40,7 +40,7 @@ def parse_bedgraph_folder(gwas_df, folder_path, output_path, ancestry, phenotype
                 annot_matrix[:, file_counter] = 1
                 file_counter += 1
 
-    # Add separate p-value columns for each phenotype
+    # add separate p-value columns for each phenotype
     for i, phenotype in enumerate(phenotypes):
         if phenotype in gwas_df.columns:
             annot_matrix[:, 127 + i] = gwas_df[phenotype].values
@@ -51,7 +51,7 @@ def parse_bedgraph_folder(gwas_df, folder_path, output_path, ancestry, phenotype
 
     # save annotation matrix as .csv.gz file with modified output file path format
     output_file_path = os.path.join(output_path, f'{ancestry}_stratified_combined.csv.gz')
-    matrix_df.to_csv(output_file_path, index=False, compression='gzip')
+    matrix_df.to_csv(output_file_path, index = False, compression = 'gzip')
 
     print(f"Annotation matrix for {output_path} saved to {output_file_path}")
 
@@ -67,8 +67,8 @@ for phenotype in pheno_categories:
         bedgraph_folder_path = os.path.join(data_folder_path, 'BedGraph')
         output_folder_path = os.path.join(data_folder_path, f'{ancestry}_stratified', f'{ancestry}_stratified_{phenotype}')
 
-        # Create the output folder if it doesn't exist
-        os.makedirs(output_folder_path, exist_ok=True)
+        # create the output folder if it doesn't already exist
+        os.makedirs(output_folder_path, exist_ok = True)
 
         gwas_df = read_gwas_summary_stats(gwas_file_path)
         parse_bedgraph_folder(gwas_df, bedgraph_folder_path, output_folder_path, ancestry, pheno_categories)
