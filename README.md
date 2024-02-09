@@ -1,1 +1,1 @@
-### Leveraging Multi-GPA-Tree to Analyze the Genetic Architecture of Substance Use Disorders
+### Utilizing Multi-GPA-Tree to Analyze the Genetic Architecture of Substance Use Disorders
