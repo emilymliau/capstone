@@ -3,7 +3,7 @@ import os
 import gzip
 
 # function to unzip .txt.gz files
-def unzip_gz_files(folder_path):
+def unzip_txt_files(folder_path):
     # verify folder path exists
     if not os.path.exists(folder_path):
         print(f"ERROR: Folder '{folder_path}' does not exist.")
@@ -14,7 +14,7 @@ def unzip_gz_files(folder_path):
         for directory in dirs:
             subdirectory_path = os.path.join(root, directory)
 
-            print(f"UNZIPPING FILES IN SUBDIRECTORY: {subdirectory_path}")
+            print(f"STATUS: Unzipping Files in Subdirectory: {subdirectory_path}")
 
             # loop through all files in the current subdirectory
             for filename in os.listdir(subdirectory_path):
@@ -27,7 +27,7 @@ def unzip_gz_files(folder_path):
 
                     print(f"...Unzipped {filename} to {output_file_path}")
 
-    print("All .txt.gz files in all folders unzipped.")
+    print("All .txt.gz files in all folders of GWAS data unzipped.")
 
 data_folder_path = 'C:/Users/emily/BINF_43C9/data/'
-unzip_gz_files(data_folder_path)
+unzip_txt_files(data_folder_path)
