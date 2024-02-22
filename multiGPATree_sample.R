@@ -1,3 +1,7 @@
+#####################################
+##    MULTIGPATREE, Sample Data    ##
+#####################################
+
 #install.packages("devtools")
 library(devtools)
 install_github("cran/mvpart")
@@ -51,5 +55,3 @@ table(assoc.mGPATree.p1p2$P1)
 table(assoc.mGPATree.p1p2$P1, assoc.mGPATree.p1p2$leaf)
 table(assoc.mGPATree.p1p2$P2)
 table(assoc.mGPATree.p1p2$P2, assoc.mGPATree.p1p2$leaf)
-
-
