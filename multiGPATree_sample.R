@@ -1,5 +1,5 @@
 #####################################
-##    MULTIGPATREE, Sample Data    ##
+##    multiGPATree, Sample Data    ##
 #####################################
 
 #install.packages("devtools")
